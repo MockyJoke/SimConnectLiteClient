@@ -42,6 +42,7 @@ namespace SimConnectWebService.Controllers
         [HttpGet("Status")]
         public String Status()
         {
+            simConnectClient.test();
             return simConnectClient.IsConnected ? "Connected" : "Nope";
         }
     }

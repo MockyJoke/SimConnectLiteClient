@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)\Properties\SimConnect.cfg&quot; &quot;$(TargetDir)&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)\SimConnectLib\SimConnect.dll&quot; &quot;$(TargetDir)&quot; /Y" />
+    <Exec Command="xcopy $(ProjectDir)Properties\SimConnect.cfg $(TargetDir) /Y" />
+    <Exec Command="xcopy $(ProjectDir)SimConnectLib\SimConnect.dll $(TargetDir) /Y" />
   </Target>
   
 </Project>
