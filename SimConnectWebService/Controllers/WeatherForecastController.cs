@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SimConnectWebService.Clients;
+using SimConnectWebService.Clients.SimVar;
 
 namespace SimConnectWebService.Controllers
 {
@@ -40,10 +41,18 @@ namespace SimConnectWebService.Controllers
         }
 
         [HttpGet("Status")]
-        public String Status()
+        public async Task<String> Status()
         {
-            simConnectClient.test();
-            return simConnectClient.IsConnected ? "Connected" : "Nope";
+            RecvSimobjectDataRequest<double> request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRecvSimobjectDataRequest<double>("Plane Longitude", "degrees");
+            double value = await request.RequestValueAsync();
+            return simConnectClient.IsConnected ? value.ToString() : "Nope";
+        }
+        [HttpGet("RequestDataOnSimObject")]
+        public async Task<String> RequestDataOnSimObject(string name, string units)
+        {
+            RecvSimobjectDataRequest<string> request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRecvSimobjectDataRequest<string>(name, units);
+            string value = await request.RequestValueAsync();
+            return simConnectClient.IsConnected ? value : "Nope";
         }
     }
 }

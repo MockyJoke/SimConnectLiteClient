@@ -27,7 +27,7 @@ namespace SimConnectWebService
         {
             services.AddControllers();
             SimConnectClient simConnectClient = new SimConnectClient();
-            simConnectClient.Connect();
+            simConnectClient.ConnectAsync();
             services.AddSingleton(simConnectClient);
         }
 
