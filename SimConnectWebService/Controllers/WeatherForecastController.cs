@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -54,5 +56,20 @@ namespace SimConnectWebService.Controllers
             string value = await request.RequestValueAsync();
             return simConnectClient.IsConnected ? value : "Nope";
         }
+        [HttpGet("Create")]
+        public async Task<String> Create(string name, string units, string type)
+        {
+            Type newType = MyTypeBuilder.CreateNewType("MyString", typeof(string));
+            object instance = Activator.CreateInstance(newType);
+
+            Type doubleType = typeof(double); 
+            IDataRequest request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRequestDataOnSimObjectRequest("title", units, newType);
+            //MethodInfo generic = method.MakeGenericMethod(newType);
+            //IDataRequest request = method.Invoke(simConnectClient.RecvSimobjectDataRequestFactory, new object[] { name, units }) as IDataRequest;
+            object value = await request.RequestValueAsync();
+            object output = value.GetType().GetField("innerDataVal").GetValue(value);
+            return output.ToString();
+        }
+
     }
 }

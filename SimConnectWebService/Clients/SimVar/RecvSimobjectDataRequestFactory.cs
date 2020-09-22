@@ -1,3 +1,5 @@
+using System;
+
 namespace SimConnectWebService.Clients.SimVar
 {
     public class RecvSimobjectDataRequestFactory
@@ -17,6 +19,17 @@ namespace SimConnectWebService.Clients.SimVar
         public RecvSimobjectDataRequest<T> CreateRecvSimobjectDataRequest<T>(string name, string units)
         {
             return new RecvSimobjectDataRequest<T>(simConnectClient, recvSimobjectDataRequestDispatcher)
+            {
+                Name = name,
+                Units = units,
+                RequestId = ++requestId,
+                DefinitionId = ++definitionId
+            };
+        }
+
+        public RequestDataOnSimObjectRequest CreateRequestDataOnSimObjectRequest(string name, string units, Type type)
+        {
+            return new RequestDataOnSimObjectRequest(simConnectClient, recvSimobjectDataRequestDispatcher, type)
             {
                 Name = name,
                 Units = units,
