@@ -14,13 +14,6 @@ using SimConnectWebService.Util;
 namespace SimConnectWebService.Controllers
 {
     // https://www.prepar3d.com/SDKv4/sdk/simconnect_api/managed_simconnect_projects.html
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    struct Struct1{
-        public short srt;
-        public double mydouble;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public String title;
-    }
 
     [ApiController]
     [Route("[controller]")]
@@ -71,16 +64,20 @@ namespace SimConnectWebService.Controllers
         public async Task<String> Create(string name, string units, string type)
         {
             MemoryUtil memoryUtil = new MemoryUtil();
-            Type newType = MyTypeBuilder.CreateNewType("MyString", typeof(string));
+
+            //Type newType = MyTypeBuilder.CreateNewType("MyString", typeof(string));
+            Type newType = new SimVarStructBuilder("MyString2")
+                            .AddField(SimVarType.STRING, "title")
+                            .Build();
             object instance = Activator.CreateInstance(newType);
             Console.WriteLine(memoryUtil.GetMemoryLayoutString(newType));
 
-            Type doubleType = typeof(double); 
+            Type doubleType = typeof(double);
             IDataRequest request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRequestDataOnSimObjectRequest("title", units, newType);
             //MethodInfo generic = method.MakeGenericMethod(newType);
             //IDataRequest request = method.Invoke(simConnectClient.RecvSimobjectDataRequestFactory, new object[] { name, units }) as IDataRequest;
             object value = await request.RequestValueAsync();
-            object output = value.GetType().GetField("innerDataVal").GetValue(value);
+            object output = value.GetType().GetField("title").GetValue(value);
             return output.ToString();
         }
 

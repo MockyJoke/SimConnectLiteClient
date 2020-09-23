@@ -18,7 +18,7 @@ namespace SimConnectWebService.Clients.SimVar
         public static Type CompileResultType(string name, Type dataType)
         {
             TypeBuilder tb = GetValueTypeBuilder(name);
-            ConstructorBuilder constructor = tb.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
+            //ConstructorBuilder constructor = tb.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
 
             // NOTE: assuming your list contains Field objects with fields FieldName(string) and FieldType(Type)
             //foreach (var field in yourListOfFields){
