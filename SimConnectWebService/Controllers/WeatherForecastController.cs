@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SimConnectWebService.Clients;
 using SimConnectWebService.Clients.SimVar;
+using SimConnectWebService.Util;
 
 namespace SimConnectWebService.Controllers
 {
+    // https://www.prepar3d.com/SDKv4/sdk/simconnect_api/managed_simconnect_projects.html
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    struct Struct1{
+        public short srt;
+        public double mydouble;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public String title;
+    }
+
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -59,8 +70,10 @@ namespace SimConnectWebService.Controllers
         [HttpGet("Create")]
         public async Task<String> Create(string name, string units, string type)
         {
+            MemoryUtil memoryUtil = new MemoryUtil();
             Type newType = MyTypeBuilder.CreateNewType("MyString", typeof(string));
             object instance = Activator.CreateInstance(newType);
+            Console.WriteLine(memoryUtil.GetMemoryLayoutString(newType));
 
             Type doubleType = typeof(double); 
             IDataRequest request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRequestDataOnSimObjectRequest("title", units, newType);

@@ -4,8 +4,9 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 
-namespace SimConnectWebService.Clients.SimVar{
-    
+namespace SimConnectWebService.Clients.SimVar
+{
+
     // https://stackoverflow.com/questions/41784393/how-to-emit-a-type-in-net-core
     public static class MyTypeBuilder
     {
@@ -21,8 +22,8 @@ namespace SimConnectWebService.Clients.SimVar{
 
             // NOTE: assuming your list contains Field objects with fields FieldName(string) and FieldType(Type)
             //foreach (var field in yourListOfFields){
-                //CreateProperty(tb, field.FieldName, field.FieldType);
-                CreateField(tb, "innerDataVal", dataType);
+            //CreateProperty(tb, field.FieldName, field.FieldType);
+            CreateField(tb, "innerDataVal", dataType);
             //}
 
             Type objectType = tb.CreateType();
@@ -33,9 +34,9 @@ namespace SimConnectWebService.Clients.SimVar{
         {
             var typeSignature = name;
             var an = new AssemblyName(typeSignature);
-            
-            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),AssemblyBuilderAccess.Run); //AppDomain.CurrentDomain..DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
-            AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),AssemblyBuilderAccess.Run);
+
+            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run); //AppDomain.CurrentDomain..DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
+            AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run);
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
             TypeBuilder tb = moduleBuilder.DefineType(typeSignature,
                     TypeAttributes.Public |
@@ -53,9 +54,9 @@ namespace SimConnectWebService.Clients.SimVar{
         {
             var typeSignature = name;
             var an = new AssemblyName(typeSignature);
-            
-            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),AssemblyBuilderAccess.Run); //AppDomain.CurrentDomain..DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
-            AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),AssemblyBuilderAccess.Run);
+
+            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run); //AppDomain.CurrentDomain..DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
+            AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run);
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
             TypeBuilder tb = moduleBuilder.DefineType(typeSignature,
                 TypeAttributes.Public |
@@ -63,7 +64,8 @@ namespace SimConnectWebService.Clients.SimVar{
                 TypeAttributes.SequentialLayout |
                 TypeAttributes.Serializable |
                 TypeAttributes.AnsiClass,
-                typeof(ValueType));
+                typeof(ValueType),
+                PackingSize.Size1);
             return tb;
         }
 
@@ -113,10 +115,12 @@ namespace SimConnectWebService.Clients.SimVar{
 
             var fields = typeof(MarshalAsAttribute).GetFields(BindingFlags.Public | BindingFlags.Instance);
             var sizeConst = (from f in fields
-                            where f.Name == "SizeConst"
-                            select f).ToArray();
+                             where f.Name == "SizeConst"
+                             select f).ToArray();
             var marshalAsAttr = new CustomAttributeBuilder(ctorInfo,
                 new object[] { UnmanagedType.ByValTStr }, sizeConst, new object[] { 256 });
+
+            // https://www.developerfusion.com/article/84519/mastering-structs-in-c
 
             fieldBuilder.SetOffset(0);
             fieldBuilder.SetCustomAttribute(marshalAsAttr);
