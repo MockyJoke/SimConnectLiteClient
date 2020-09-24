@@ -27,9 +27,9 @@ namespace SimConnectWebService.Clients.SimVar
             };
         }
 
-        public RequestDataOnSimObjectRequest CreateRequestDataOnSimObjectRequest(string name, string units, Type type)
+        public RequestDataOnSimObjectRequest2 CreateRequestDataOnSimObjectRequest(string name, string units, Type type)
         {
-            return new RequestDataOnSimObjectRequest(simConnectClient, recvSimobjectDataRequestDispatcher, type)
+            return new RequestDataOnSimObjectRequest2(simConnectClient, recvSimobjectDataRequestDispatcher, type)
             {
                 Name = name,
                 Units = units,

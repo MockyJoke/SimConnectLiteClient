@@ -6,14 +6,14 @@ using Microsoft.FlightSimulator.SimConnect;
 namespace SimConnectWebService.Clients.SimVar
 {
     // Represent a request to be registered with SimConnect
-    public class RequestDataOnSimObjectRequest : IDisposable, ISimVarRequest, IDataRequest
+    public class RequestDataOnSimObjectRequest2 : IDisposable, ISimVarRequest2, IDataRequest
     {
         private SimConnectClient simConnectClient;
         private RecvSimobjectDataRequestDispatcher dispatcher;
         private Type type;
 
         private TaskCompletionSource<object> taskCompletionSource;
-        public RequestDataOnSimObjectRequest(
+        public RequestDataOnSimObjectRequest2(
             SimConnectClient simConnectClient,
             RecvSimobjectDataRequestDispatcher recvSimobjectDataRequestDispatcher,
             Type type
@@ -79,7 +79,7 @@ namespace SimConnectWebService.Clients.SimVar
             return taskCompletionSource.Task;
         }
 
-        void ISimVarRequest.DeliverDataValue(SIMCONNECT_RECV_SIMOBJECT_DATA data)
+        void ISimVarRequest2.DeliverDataValue(SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
             DataValue = data.dwData[0];
             taskCompletionSource.SetResult(DataValue);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using Microsoft.FlightSimulator.SimConnect;
+using SimConnectWebService.Clients.SimVar.Model;
 
 namespace SimConnectWebService.Clients.SimVar
 {
@@ -8,12 +9,14 @@ namespace SimConnectWebService.Clients.SimVar
     {
 
         private SimConnect simConnect;
-        private ConcurrentDictionary<uint, ISimVarRequest> RequestPool;
+        private ConcurrentDictionary<uint, ISimVarRequest2> RequestPool2;
+        private ConcurrentDictionary<uint, IRequestDataOnSimObjectRequest> RequestPool;
         private SimConnect.RecvSimobjectDataEventHandler eventHandler;
         public RecvSimobjectDataRequestDispatcher(SimConnect simConnect)
         {
             this.simConnect = simConnect;
-            RequestPool = new ConcurrentDictionary<uint, ISimVarRequest>();
+            RequestPool = new ConcurrentDictionary<uint, IRequestDataOnSimObjectRequest>();
+            RequestPool2 = new ConcurrentDictionary<uint, ISimVarRequest2>();
             eventHandler = new SimConnect.RecvSimobjectDataEventHandler(SimConnect_OnRecvSimobjectData);
             simConnect.OnRecvSimobjectData += eventHandler;
         }
@@ -25,19 +28,35 @@ namespace SimConnectWebService.Clients.SimVar
 
         private void SimConnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
+            if (RequestPool2.ContainsKey(data.dwRequestID))
+            {
+                RequestPool2[data.dwRequestID].DeliverDataValue(data);
+            }
             if (RequestPool.ContainsKey(data.dwRequestID))
             {
-                RequestPool[data.dwRequestID].DeliverDataValue(data);
+                RequestPool[data.dwRequestID].DeliverResult(data);
             }
         }
 
-        internal void RegisterRequest(ISimVarRequest request)
+        internal void RegisterRequest(ISimVarRequest2 request)
+        {
+            RequestPool2.TryAdd(request.RequestId, request);
+        }
+        
+        
+        internal void UnRegisterRequest(ISimVarRequest2 request)
+        {
+            ISimVarRequest2 outValue;
+            RequestPool2.TryRemove(request.RequestId, out outValue);
+        }
+
+        internal void RegisterRequest(IRequestDataOnSimObjectRequest request)
         {
             RequestPool.TryAdd(request.RequestId, request);
         }
-        internal void UnRegisterRequest(ISimVarRequest request)
+        internal void UnRegisterRequest(IRequestDataOnSimObjectRequest request)
         {
-            ISimVarRequest outValue;
+            IRequestDataOnSimObjectRequest outValue;
             RequestPool.TryRemove(request.RequestId, out outValue);
         }
     }

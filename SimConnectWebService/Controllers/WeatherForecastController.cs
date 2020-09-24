@@ -4,11 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SimConnectWebService.Clients;
 using SimConnectWebService.Clients.SimVar;
+using SimConnectWebService.Clients.SimVar.Model;
 using SimConnectWebService.Util;
 
 namespace SimConnectWebService.Controllers
@@ -19,6 +21,7 @@ namespace SimConnectWebService.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        private SimVarMappingUtil simVarMapping = new SimVarMappingUtil();
         private readonly SimConnectClient simConnectClient;
         private static readonly string[] Summaries = new[]
         {
@@ -81,5 +84,39 @@ namespace SimConnectWebService.Controllers
             return output.ToString();
         }
 
+        [HttpGet("GetOne")]
+        public async Task<String> GetOne(string name, string units, string varType, string targetObject)
+        {
+            SimVarFieldGroup simVarFieldGroup = new SimVarFieldGroup();
+            simVarFieldGroup.AddSimVarField(new SimVarField()
+            {
+                VarName = "title",
+                Units = units,
+                VarType = simVarMapping.GetSimVarTypeFromStringType("string")
+            });
+            simVarFieldGroup.AddSimVarField(new SimVarField()
+            {
+                VarName = "Plane Latitude",
+                Units = units,
+                VarType = simVarMapping.GetSimVarTypeFromStringType("float")
+            });
+            simVarFieldGroup.AddSimVarField(new SimVarField()
+            {
+                VarName = "Plane Longitude",
+                Units = units,
+                VarType = simVarMapping.GetSimVarTypeFromStringType("float")
+            });
+            simVarFieldGroup.AddSimVarField(new SimVarField()
+            {
+                VarName = "ATC ID",
+                Units = units,
+                VarType = simVarMapping.GetSimVarTypeFromStringType("string")
+            });
+
+            SimVarRequestClient requestClient = new SimVarRequestClient(simConnectClient);
+            object result = await requestClient.RequestDataOnSimObjectAsync(simVarFieldGroup);
+            string json = JsonSerializer.Serialize(result);
+            return json;
+        }
     }
 }

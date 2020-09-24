@@ -1,6 +1,6 @@
-namespace SimConnectWebService.Clients.SimVar
+namespace SimConnectWebService.Clients.SimVar.Model
 {
-    enum SimVarType
+    public enum SimVarType
     {
         BOOLEAN,
         FLOAT,
