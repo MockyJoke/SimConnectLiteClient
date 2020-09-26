@@ -52,36 +52,12 @@ namespace SimConnectWebService.Controllers
         [HttpGet("Status")]
         public async Task<String> Status()
         {
-            RecvSimobjectDataRequest<double> request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRecvSimobjectDataRequest<double>("Plane Longitude", "degrees");
-            double value = await request.RequestValueAsync();
-            return simConnectClient.IsConnected ? value.ToString() : "Nope";
+            return simConnectClient.IsConnected ? "Yes" : "Nope";
         }
         [HttpGet("RequestDataOnSimObject")]
         public async Task<String> RequestDataOnSimObject(string name, string units)
         {
-            RecvSimobjectDataRequest<string> request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRecvSimobjectDataRequest<string>(name, units);
-            string value = await request.RequestValueAsync();
-            return simConnectClient.IsConnected ? value : "Nope";
-        }
-        [HttpGet("Create")]
-        public async Task<String> Create(string name, string units, string type)
-        {
-            MemoryUtil memoryUtil = new MemoryUtil();
-
-            //Type newType = MyTypeBuilder.CreateNewType("MyString", typeof(string));
-            Type newType = new SimVarStructBuilder("MyString2")
-                            .AddField(SimVarType.STRING, "title")
-                            .Build();
-            object instance = Activator.CreateInstance(newType);
-            Console.WriteLine(memoryUtil.GetMemoryLayoutString(newType));
-
-            Type doubleType = typeof(double);
-            IDataRequest request = simConnectClient.RecvSimobjectDataRequestFactory.CreateRequestDataOnSimObjectRequest("title", units, newType);
-            //MethodInfo generic = method.MakeGenericMethod(newType);
-            //IDataRequest request = method.Invoke(simConnectClient.RecvSimobjectDataRequestFactory, new object[] { name, units }) as IDataRequest;
-            object value = await request.RequestValueAsync();
-            object output = value.GetType().GetField("title").GetValue(value);
-            return output.ToString();
+            return simConnectClient.IsConnected ? "Yes" : "Nope";
         }
 
         [HttpGet("GetOne")]

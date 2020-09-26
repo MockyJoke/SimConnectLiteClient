@@ -15,24 +15,22 @@ namespace SimConnectWebService.Clients
     public class SimConnectClient
     {
         /// User-defined win32 event
-        public const int WM_USER_SIMCONNECT = 0x0402;
-
+        private const int WM_USER_SIMCONNECT = 0x0402;
         private AutoResetEvent messageSignal = new AutoResetEvent(false);
         /// SimConnect object
         private SimConnect simConnect = null;
 
-
-        public SimConnect SimConnect
-        {
-            get
-            {
-                return simConnect;
-            }
-        }
-
+        public SimConnect SimConnect => simConnect;
         public bool IsFSXcompatible { get; private set; }
         public bool IsConnected { get; private set; }
-        public RecvSimobjectDataRequestFactory RecvSimobjectDataRequestFactory { get; private set; }
+
+        public SimVarMappingUtil MappingUtil { get; private set; }
+        public SimVarRequestDefinitionRegistry RequestDefinitionRegistry { get; private set; }
+        public RequestDataOnSimObjectRequestDispatcher RequestDispatcher { get; private set; }
+        public SimConnectClient()
+        {
+            MappingUtil = new SimVarMappingUtil();
+        }
 
         public Task<bool> ConnectAsync()
         {
@@ -40,16 +38,17 @@ namespace SimConnectWebService.Clients
 
             /// The constructor is similar to SimConnect_Open in the native API
             simConnect = new SimConnect("Simconnect - Simvar test", new IntPtr(0), WM_USER_SIMCONNECT, messageSignal, IsFSXcompatible ? (uint)1 : 0);
-            RecvSimobjectDataRequestFactory = new RecvSimobjectDataRequestFactory(this, new RecvSimobjectDataRequestDispatcher(simConnect));
 
-            TaskCompletionSource<bool> ConnectTaskCompletionSource = new TaskCompletionSource<bool>();
+            TaskCompletionSource<bool> connectTaskCompletionSource = new TaskCompletionSource<bool>();
             /// Listen to connect and quit msgs
             simConnect.OnRecvOpen += new SimConnect.RecvOpenEventHandler((SimConnect sender, SIMCONNECT_RECV_OPEN data) =>
             {
+                RequestDefinitionRegistry = new SimVarRequestDefinitionRegistry(this);
+                RequestDispatcher = new RequestDataOnSimObjectRequestDispatcher(this);
                 Console.WriteLine("SimConnect_OnRecvOpen");
                 Console.WriteLine("Connected to KH");
                 IsConnected = true;
-                ConnectTaskCompletionSource.TrySetResult(true);
+                connectTaskCompletionSource.TrySetResult(true);
             });
 
             simConnect.OnRecvQuit += new SimConnect.RecvQuitEventHandler(SimConnect_OnRecvQuit);
@@ -67,9 +66,8 @@ namespace SimConnectWebService.Clients
                     }
                 }
             });
-            return ConnectTaskCompletionSource.Task;
+            return connectTaskCompletionSource.Task;
         }
-
 
         public void Disconnect()
         {
@@ -84,7 +82,6 @@ namespace SimConnectWebService.Clients
 
             IsConnected = false;
         }
-
 
         /// The case where the user closes game
         private void SimConnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)

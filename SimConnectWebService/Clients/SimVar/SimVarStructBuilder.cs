@@ -13,10 +13,11 @@ namespace SimConnectWebService.Clients.SimVar
         private const int STRING_SIZE = 256;
         private SimVarMappingUtil mappingUtil;
         private TypeBuilder structTypeBuilder;
+        
         public SimVarStructBuilder() :
             this(null)
-        {
-        }
+        { }
+
         public SimVarStructBuilder(string structName)
         {
             if (string.IsNullOrEmpty(structName))
@@ -33,11 +34,13 @@ namespace SimConnectWebService.Clients.SimVar
             defineProperty(simVarType, propertyName);
             return this;
         }
+
         public SimVarStructBuilder AddField(SimVarType simVarType, string fieldName)
         {
             defineField(simVarType, fieldName);
             return this;
         }
+
         public Type Build()
         {
             return structTypeBuilder.CreateType();
@@ -104,6 +107,8 @@ namespace SimConnectWebService.Clients.SimVar
 
         private TypeBuilder getTypeBuilder(string typeName)
         {
+            // https://stackoverflow.com/questions/41784393/how-to-emit-a-type-in-net-core
+            // https://gist.github.com/ChadSki/7992383
             string typeSignature = typeName;
             AssemblyName assemblyName = new AssemblyName(typeSignature);
 

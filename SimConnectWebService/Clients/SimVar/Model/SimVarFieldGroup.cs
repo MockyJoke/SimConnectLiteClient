@@ -16,7 +16,6 @@ namespace SimConnectWebService.Clients.SimVar.Model
         public string Name { get; private set; }
         public SimVarTargetObject TargetObject { get; private set; } = SimVarTargetObject.USER;
 
-
         public SimVarFieldGroup() :
             this(null)
         {
