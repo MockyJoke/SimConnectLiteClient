@@ -26,7 +26,7 @@ namespace SimConnectWebService.Clients
 
         public SimVarMappingUtil MappingUtil { get; private set; }
         public SimVarRequestDefinitionRegistry RequestDefinitionRegistry { get; private set; }
-        public RequestDataOnSimObjectRequestDispatcher RequestDispatcher { get; private set; }
+        public SimVarRequestDispatcher RequestDispatcher { get; private set; }
         public SimConnectClient()
         {
             MappingUtil = new SimVarMappingUtil();
@@ -44,7 +44,7 @@ namespace SimConnectWebService.Clients
             simConnect.OnRecvOpen += new SimConnect.RecvOpenEventHandler((SimConnect sender, SIMCONNECT_RECV_OPEN data) =>
             {
                 RequestDefinitionRegistry = new SimVarRequestDefinitionRegistry(this);
-                RequestDispatcher = new RequestDataOnSimObjectRequestDispatcher(this);
+                RequestDispatcher = new SimVarRequestDispatcher(this);
                 Console.WriteLine("SimConnect_OnRecvOpen");
                 Console.WriteLine("Connected to KH");
                 IsConnected = true;

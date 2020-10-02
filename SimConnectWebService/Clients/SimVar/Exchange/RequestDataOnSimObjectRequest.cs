@@ -1,8 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.FlightSimulator.SimConnect;
+using SimConnectWebService.Clients.SimVar.Model;
 
-namespace SimConnectWebService.Clients.SimVar.Model
+namespace SimConnectWebService.Clients.SimVar.Exchange
 {
     public class RequestDataOnSimObjectRequest : IRequestDataOnSimObjectRequest, IDisposable
     {
@@ -29,7 +30,7 @@ namespace SimConnectWebService.Clients.SimVar.Model
             simConnectClient.SimConnect.RequestDataOnSimObject(
                 (SimObjectDataRequestIdEnum)RequestId,
                 (SimObjectDataRequestDefinitionIdEnum)RequestDefinition.DefinitionId,
-                simConnectClient.MappingUtil.GetSimConnectObjectId(RequestDefinition.FieldGroup.TargetObject),
+                RequestDefinition.FieldGroup.TargetObjectId,
                 SIMCONNECT_PERIOD.ONCE, 0, 0, 0, 0);
             return taskCompletionSource.Task;
         }
@@ -41,14 +42,14 @@ namespace SimConnectWebService.Clients.SimVar.Model
                 simConnectClient.SimConnect.RequestDataOnSimObject(
                     (SimObjectDataRequestIdEnum)RequestId,
                     (SimObjectDataRequestDefinitionIdEnum)RequestDefinition.DefinitionId,
-                    simConnectClient.MappingUtil.GetSimConnectObjectId(RequestDefinition.FieldGroup.TargetObject),
+                     RequestDefinition.FieldGroup.TargetObjectId,
                     SIMCONNECT_PERIOD.NEVER, 0, 0, 0, 0);
                 simConnectClient.SimConnect.ClearDataDefinition((SimObjectDataRequestDefinitionIdEnum)RequestDefinition.DefinitionId);
                 IsInUse = false;
             }
         }
 
-        public void DeliverResult(RequestDataOnSimObjectRequestDispatcher dispatcher, SIMCONNECT_RECV_SIMOBJECT_DATA data)
+        public void DeliverResult(SimVarRequestDispatcher dispatcher, SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
             taskCompletionSource.SetResult(data.dwData[0]);
         }

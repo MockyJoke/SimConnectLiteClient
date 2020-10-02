@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Reflection;
 using Microsoft.FlightSimulator.SimConnect;
 using SimConnectWebService.Clients.SimVar.Model;
@@ -8,14 +9,28 @@ namespace SimConnectWebService.Clients.SimVar
     public class SimVarRequestDefinitionRegistry
     {
         private static uint internalDefinitionId = 0;
+        private ConcurrentDictionary<SimVarFieldGroup, SimVarRequestDefinition> simVarRequestDefinitionCache;
         private SimConnectClient simConnectClient;
 
         public SimVarRequestDefinitionRegistry(SimConnectClient simConnectClient)
         {
             this.simConnectClient = simConnectClient;
+            simVarRequestDefinitionCache = new ConcurrentDictionary<SimVarFieldGroup, SimVarRequestDefinition>();
         }
 
         public SimVarRequestDefinition RegisterType(SimVarFieldGroup simVarFieldGroup)
+        {
+            SimVarRequestDefinition result;
+            if (simVarRequestDefinitionCache.TryGetValue(simVarFieldGroup, out result))
+            {
+                return result;
+            }
+            result = DoRegisterType(simVarFieldGroup);
+            simVarRequestDefinitionCache.TryAdd(simVarFieldGroup, result);
+            return result;
+        }
+
+        private SimVarRequestDefinition DoRegisterType(SimVarFieldGroup simVarFieldGroup)
         {
             uint definitionId = GetDefinitionId(simVarFieldGroup);
             foreach (SimVarField simVarField in simVarFieldGroup.SimVarFieldList)

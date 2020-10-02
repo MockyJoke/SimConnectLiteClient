@@ -12,12 +12,6 @@ namespace SimConnectWebService.Clients.SimVar
             return Enum.Parse<SimVarType>(varType);
         }
 
-        public SimVarTargetObject GetSimVarTargetObjectFromString(string targetObject)
-        {
-            targetObject = targetObject.Trim().ToUpper();
-            return Enum.Parse<SimVarTargetObject>(targetObject);
-        }
-
         public string GetSimVarStructFieldNameFromVarName(string varName)
         {
             return varName.ToLower().Replace(' ', '-');
@@ -57,17 +51,5 @@ namespace SimConnectWebService.Clients.SimVar
                     return typeof(double);
             }
         }
-
-        public uint GetSimConnectObjectId(SimVarTargetObject simVarTargetObject)
-        {
-            switch (simVarTargetObject)
-            {
-                case SimVarTargetObject.USER:
-                    return SimConnect.SIMCONNECT_OBJECT_ID_USER;
-                default:
-                    return SimConnect.SIMCONNECT_OBJECT_ID_USER;
-            }
-        }
-
     }
 }
