@@ -23,8 +23,8 @@ namespace SimConnectWebService.Clients.SimVar
             simConnectClient.SimConnect.OnRecvSimobjectData += recvSimobjectDataEventHandler;
 
 
-            requestDataOnSimObjectRequestPool =  new ConcurrentDictionary<uint, RequestDataOnSimObjectTypeRequest>();
-            recvSimobjectDataBytypeEventHandler =new SimConnect.RecvSimobjectDataBytypeEventHandler(SimConnect_OnRecvSimobjectDataBytype);
+            requestDataOnSimObjectRequestPool = new ConcurrentDictionary<uint, RequestDataOnSimObjectTypeRequest>();
+            recvSimobjectDataBytypeEventHandler = new SimConnect.RecvSimobjectDataBytypeEventHandler(SimConnect_OnRecvSimobjectDataBytype);
             simConnectClient.SimConnect.OnRecvSimobjectDataBytype += recvSimobjectDataBytypeEventHandler;
         }
 

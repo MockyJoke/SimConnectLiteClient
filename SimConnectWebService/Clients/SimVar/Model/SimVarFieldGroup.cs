@@ -15,22 +15,16 @@ namespace SimConnectWebService.Clients.SimVar.Model
             }
         }
         public string Name { get; private set; }
-        public uint TargetObjectId { get; private set; }
 
         public SimVarFieldGroup() :
             this(null)
         {
         }
-        public SimVarFieldGroup(string name) :
-            this(name, 0)
-        {
-        }
 
-        public SimVarFieldGroup(string name, uint targetObject)
+        public SimVarFieldGroup(string name)
         {
             simVarFieldList = new List<SimVarField>();
             Name = name;
-            TargetObjectId = targetObject;
         }
 
         public void AddSimVarField(SimVarField simVar)

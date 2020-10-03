@@ -113,7 +113,6 @@ namespace SimConnectWebService.Clients.SimVar
             AssemblyName assemblyName = new AssemblyName(typeSignature);
 
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run); //AppDomain.CurrentDomain..DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
-            AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run);
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(MODULE_NAME);
             TypeBuilder typeBuilder = moduleBuilder.DefineType(typeSignature,
                 TypeAttributes.Public |

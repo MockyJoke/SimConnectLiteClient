@@ -12,11 +12,13 @@ namespace SimConnectWebService.Clients.SimVar.Exchange
         public SimVarRequestDefinition RequestDefinition { get; private set; }
         public bool IsInUse { get; private set; }
         public uint RequestId { get; private set; }
-        public RequestDataOnSimObjectRequest(SimConnectClient simConnectClient, SimVarRequestDefinition requestDefinition, uint requestId)
+        public uint TargetObjectId { get; private set; }
+        public RequestDataOnSimObjectRequest(SimConnectClient simConnectClient, SimVarRequestDefinition requestDefinition, uint targetObjectId, uint requestId)
         {
             this.simConnectClient = simConnectClient;
             this.RequestDefinition = requestDefinition;
             this.RequestId = requestId;
+            this.TargetObjectId = targetObjectId;
         }
 
         public Task<object> RequestAsync()
@@ -30,7 +32,7 @@ namespace SimConnectWebService.Clients.SimVar.Exchange
             simConnectClient.SimConnect.RequestDataOnSimObject(
                 (SimObjectDataRequestIdEnum)RequestId,
                 (SimObjectDataRequestDefinitionIdEnum)RequestDefinition.DefinitionId,
-                RequestDefinition.FieldGroup.TargetObjectId,
+                TargetObjectId,
                 SIMCONNECT_PERIOD.ONCE, 0, 0, 0, 0);
             return taskCompletionSource.Task;
         }
@@ -42,7 +44,7 @@ namespace SimConnectWebService.Clients.SimVar.Exchange
                 simConnectClient.SimConnect.RequestDataOnSimObject(
                     (SimObjectDataRequestIdEnum)RequestId,
                     (SimObjectDataRequestDefinitionIdEnum)RequestDefinition.DefinitionId,
-                     RequestDefinition.FieldGroup.TargetObjectId,
+                    TargetObjectId,
                     SIMCONNECT_PERIOD.NEVER, 0, 0, 0, 0);
                 simConnectClient.SimConnect.ClearDataDefinition((SimObjectDataRequestDefinitionIdEnum)RequestDefinition.DefinitionId);
                 IsInUse = false;
