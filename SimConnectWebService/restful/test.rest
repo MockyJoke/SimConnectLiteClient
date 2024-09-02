@@ -1,0 +1,5 @@
+GET http://localhost:5000/SimConnect/GetBasic HTTP/1.1
+
+
+###
+GET http://localhost:5000/SimConnect/GetOther HTTP/1.1
